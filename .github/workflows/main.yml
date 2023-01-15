@@ -64,7 +64,7 @@ jobs:
         env:
           CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
         run: |
-          '"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\SignTool" sign /a /fd SHA256 /f WinSignCert.pfx /p ($env:CERT_PASSWORD) bin\Release\net7.0-windows10.0.19041.0\win10-x64\AppPackages\MauiBlazorDemo_1.0.0.1_Test\MauiBlazorDemo_1.0.0.1_x64.msix'
+          '"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\SignTool" sign /a /fd SHA256 /f WinSignCert.pfx /p ($env:CERT_PASSWORD) D:\a\maui-blazor-dome\maui-blazor-dome\bin\Release\net7.0-windows10.0.19041.0\win10-x64\AppPackages\MauiBlazorDemo_1.0.0.0_Test\MauiBlazorDemo_1.0.0.0_x64.msix'
       - uses: actions/upload-artifact@v2
         with:
           name: artifacts-windows
