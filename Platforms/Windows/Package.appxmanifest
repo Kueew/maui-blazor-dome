@@ -6,7 +6,9 @@
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   IgnorableNamespaces="uap rescap">
 
-  <Identity Name="maui-package-name-placeholder" Publisher="CN=User Name" Version="0.0.0.0" />
+  <Identity Name="maui-blazor-demo" 
+    Version="1.0.0.0" 
+    Publisher="CN=Spring Software, O=Spring, C=CN"/>
 
   <mp:PhoneIdentity PhoneProductId="476F2382-B702-4179-B81D-F1974530FDBD" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
