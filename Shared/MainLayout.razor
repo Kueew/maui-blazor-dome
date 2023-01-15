@@ -4,9 +4,48 @@
     <MSystemBar Height="30">
     </MSystemBar>
     <MContainer Style="height:100%">
-        @Body
+        <MCard Class="mx-auto">
+            <MNavigationDrawer Class="deep-purple accent-4" Dark Permanent>
+                <ChildContent>
+                    <MList>
+                        @foreach (var item in _items)
+                        {
+                            <MListItem Link Dark>
+                                <MListItemIcon>
+                                    <MIcon Dark>@item.Icon</MIcon>
+                                </MListItemIcon>
+
+                                <MListItemContent>
+                                    <MListItemTitle>@item.Title</MListItemTitle>
+                                </MListItemContent>
+                            </MListItem>
+                        }
+                    </MList>
+                </ChildContent>
+
+                <AppendContent>
+                    <div class="pa-2">
+                        <MButton Block Dark>LogOut</MButton>
+                    </div>
+                </AppendContent>
+            </MNavigationDrawer>
+        </MCard>
     </MContainer>
     <MFooter>
         wang
     </MFooter>
 </MApp>
+
+@code{
+    private class ItemDemo
+    {
+        public string Title { get; set; }
+        public string Icon { get; set; }
+    }
+    private List<ItemDemo> _items = new()
+{
+        new ItemDemo { Title = "Dashboard", Icon = "mdi-view-dashboard" },
+        new ItemDemo { Title = "Account", Icon = "mdi-account-box" },
+        new ItemDemo { Title = "Admin", Icon = "mdi-gavel" }
+    };
+}
