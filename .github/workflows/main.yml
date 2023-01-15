@@ -30,43 +30,22 @@ jobs:
           & dotnet workload install maui --source https://aka.ms/dotnet6/nuget/index.json --source https://api.nuget.org/v3/index.json
           #        & dotnet workload install android ios maccatalyst tvos macos maui wasm-tools maui-maccatalyst --source https://aka.ms/dotnet6/nuget/index.json --source https://api.nuget.org/v3/index.json
       
+      - name: Decrypt PFX File
+        run: |
+          echo "${{ secrets.WINDOWS_PFX_FILE }}" > cert.pfx.asc
+          certutil -decode cert.pfx.asc cert.pfx
+          
+      - name: Add Cert to Store
+        run: certutil -user -q -p ${{ secrets.WINDOWS_PFX_PASSWORD }} -importpfx cert.pfx NoRoot
+
+
       # https://docs.microsoft.com/en-us/dotnet/maui/windows/deployment/overview
       - name: Build Windows MSIX
         run: |
           cd .\
-          dotnet publish -f net7.0-windows10.0.19041.0 -c Release 
-          
-#       - name: Build and Run UnitTests
-#         shell: bash
-#         run: |
-#           dotnet build <path to unit test csproj>
-#           dotnet test <path to unit test csproj> --no-build --verbosity normal
-
-      # https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/certutil
-      # commandline util to encode to base64 on windows
-      - name: Create signing pfx file from secrets
-        shell: pwsh
-        id: secret-file
-        env:
-          SECRET_DATA1: ${{ secrets.WIN_SIGN_CERT }}
-        run: |
-          $secretFile = "WinSignCert.pfx"; 
-          $encodedBytes = [System.Convert]::FromBase64String($env:SECRET_DATA1); 
-          Set-Content $secretFile -Value $encodedBytes -AsByteStream;
-          Write-Output "::set-output name=SECRET_FILE::$secretFile";
-          Write-Output " ";
-          Write-Output "CHECK FILE EXISTS";
-          Write-Output " ";
-          ls
-      # https://docs.microsoft.com/en-us/windows/msix/desktop/azure-dev-ops
-      - name: Sign Windows App
-        shell: pwsh
-        env:
-          CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
-        run: |
-          '"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\SignTool" sign /a /fd SHA256 /f WinSignCert.pfx /p ($env:CERT_PASSWORD) D:\a\maui-blazor-dome\maui-blazor-dome\bin\Release\net7.0-windows10.0.19041.0\win10-x64\AppPackages\MauiBlazorDemo_1.0.0.0_Test\MauiBlazorDemo_1.0.0.0_x64.msix'
-      - uses: actions/upload-artifact@v2
+          dotnet publish -c Release -f:net7.0-windows10.0.19041.0 /p:GenerateAppxPackageOnBuild=true /p:AppxPackageSigningEnabled=true /p:PackageCertificateThumbprint="${{ secrets.WINDOWS_PFX_THUMBPRINT }}"
+      
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3.1.0
         with:
-          name: artifacts-windows
-          path: |
-            **\*.msix
+          path: .\**\AppPackages\**\*.*
